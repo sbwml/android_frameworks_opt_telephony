@@ -3523,6 +3523,10 @@ public abstract class Phone extends Handler implements PhoneInternalInterface {
     public void cancelUSSD() {
     }
 
+    public String getOperatorNumeric() {
+        return "";
+    }
+
     /**
      * Set boolean broadcastEmergencyCallStateChanges
      */
