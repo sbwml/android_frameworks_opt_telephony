@@ -283,6 +283,11 @@ public class UiccSmsController extends ISms.Stub {
             Binder.restoreCallingIdentity(identity);
         }
 
+        if (isSMSPromptEnabled()) {
+            // we will make the user pick
+            return false;
+        }
+
         if (subInfoList != null) {
             final int subInfoLength = subInfoList.size();
 
