@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2016-2018 The MoKee Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +89,7 @@ import com.android.internal.telephony.cdma.EriInfo;
 import com.android.internal.telephony.dataconnection.DcTracker;
 import com.android.internal.telephony.dataconnection.TransportManager;
 import com.android.internal.telephony.metrics.TelephonyMetrics;
+import com.android.internal.telephony.OperatorUtils;
 import com.android.internal.telephony.uicc.IccCardApplicationStatus.AppState;
 import com.android.internal.telephony.uicc.IccCardStatus.CardState;
 import com.android.internal.telephony.uicc.IccRecords;
@@ -1967,9 +1969,9 @@ public class ServiceStateTracker extends Handler {
                                         .getOperatorBrandOverride() : null;
                         if (brandOverride != null) {
                             log("EVENT_POLL_STATE_OPERATOR: use brandOverride=" + brandOverride);
-                            mNewSS.setOperatorName(brandOverride, brandOverride, opNames[2]);
+                            mNewSS.setOperatorName(OperatorUtils.operatorReplace(brandOverride, opNames[2]), brandOverride, opNames[2]);
                         } else {
-                            mNewSS.setOperatorName(opNames[0], opNames[1], opNames[2]);
+                            mNewSS.setOperatorName(OperatorUtils.operatorReplace(opNames[0], opNames[2]), opNames[1], opNames[2]);
                         }
                     }
                 } else {
@@ -1992,15 +1994,15 @@ public class ServiceStateTracker extends Handler {
 
                         if (!mIsSubscriptionFromRuim) {
                             // NV device (as opposed to CSIM)
-                            mNewSS.setOperatorName(opNames[0], opNames[1], opNames[2]);
+                            mNewSS.setOperatorName(OperatorUtils.operatorReplace(opNames[0], opNames[2]), opNames[1], opNames[2]);
                         } else {
                             String brandOverride = mUiccController.getUiccCard(getPhoneId()) != null
                                     ? mUiccController.getUiccCard(getPhoneId())
                                     .getOperatorBrandOverride() : null;
                             if (brandOverride != null) {
-                                mNewSS.setOperatorName(brandOverride, brandOverride, opNames[2]);
+                                mNewSS.setOperatorName(OperatorUtils.operatorReplace(brandOverride, opNames[2]), brandOverride, opNames[2]);
                             } else {
-                                mNewSS.setOperatorName(opNames[0], opNames[1], opNames[2]);
+                                mNewSS.setOperatorName(OperatorUtils.operatorReplace(opNames[0], opNames[2]), opNames[1], opNames[2]);
                             }
                         }
                     } else {
@@ -2348,7 +2350,7 @@ public class ServiceStateTracker extends Handler {
                         "of service, set plmn='" + plmn + "'");
             } else if (combinedRegState == ServiceState.STATE_IN_SERVICE) {
                 // In either home or roaming service
-                plmn = mSS.getOperatorAlpha();
+                plmn = OperatorUtils.operatorReplace(mSS.getOperatorAlphaLong(), mSS.getOperatorNumeric());
                 showPlmn = !TextUtils.isEmpty(plmn) &&
                         ((rule & SIMRecords.SPN_RULE_SHOW_PLMN)
                                 == SIMRecords.SPN_RULE_SHOW_PLMN);
@@ -2365,7 +2367,7 @@ public class ServiceStateTracker extends Handler {
             //    EXTRA_SHOW_SPN = depending on IccRecords rule and radio/IMS state
             //    EXTRA_SPN = spn
             //    EXTRA_DATA_SPN = dataSpn
-            String spn = (iccRecords != null) ? iccRecords.getServiceProviderName() : "";
+            String spn = (iccRecords != null) ? OperatorUtils.operatorReplace(iccRecords.getServiceProviderName(), mSS.getOperatorNumeric()) : "";
             String dataSpn = spn;
             boolean showSpn = !noService && !TextUtils.isEmpty(spn)
                     && ((rule & SIMRecords.SPN_RULE_SHOW_SPN)
