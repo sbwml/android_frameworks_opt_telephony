@@ -39,6 +39,7 @@ public interface AppInterface {
     //This is used to send ALPHA string from card to STK App.
     public static final String ALPHA_STRING = "alpha_string";
 
+    public static final String AID = "aid";
     // This is used to send refresh-result when MSG_ID_ICC_REFRESH is received.
     public static final String REFRESH_RESULT = "refresh_result";
     //This is used to send card status from card to STK App.
@@ -54,6 +55,18 @@ public interface AppInterface {
     public static ComponentName getDefaultSTKApplication() {
         return ComponentName.unflattenFromString("com.android.stk/.StkCmdReceiver");
     }
+
+    /*
+     * Intent action broadcasted by StkAppService when the ACTIVATE proactive command
+     * arrives.
+     */
+    public static final String CAT_ACTIVATE_NOTIFY_ACTION =
+                                    "org.codeaurora.intent.action.stk.activate_notify";
+    /*
+     * Intent action broadcasted by NfcService when the HCI Connectivity event occurs.
+     */
+    public static final String CAT_HCI_CONNECTIVITY_ACTION =
+                                    "org.codeaurora.intent.action.stk.hci_connectivity";
 
     /*
      * Callback function from app to telephony to pass a result code and user's
@@ -88,7 +101,8 @@ public interface AppInterface {
         CLOSE_CHANNEL(0x41),
         RECEIVE_DATA(0x42),
         SEND_DATA(0x43),
-        GET_CHANNEL_STATUS(0x44);
+        GET_CHANNEL_STATUS(0x44),
+        ACTIVATE(0x70);
 
         private int mValue;
 
